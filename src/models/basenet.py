@@ -162,7 +162,10 @@ class ResNet(nn.Module):
         y = self.head(y, recurrence)
         y = F.upsample(y, size=x.size()[2:], mode='bilinear')
         y_dsn = F.upsample(y_dsn, size=x.size()[2:], mode='bilinear')
-        return [y, y_dsn]
+        if self.training:
+            return [y, y_dsn]
+        else:
+            return y
 
 
 def Res_Deeplab(num_classes=5):
