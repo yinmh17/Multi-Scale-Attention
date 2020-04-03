@@ -255,54 +255,54 @@ def runTraining(args):
         directory = args.save_dir + modelName
         
         Losses.append(np.mean(lossVal))
-        
-        d1,d2,d3,d4 = inference(net, val_loader)
-        
-        d1Val.append(d1)
-        d2Val.append(d2)
-        d3Val.append(d3)
-        d4Val.append(d4)
+        if i%5==0:
+            d1,d2,d3,d4 = inference(net, val_loader)
 
-        if not os.path.exists(directory):
-            os.makedirs(directory)
+            d1Val.append(d1)
+            d2Val.append(d2)
+            d3Val.append(d3)
+            d4Val.append(d4)
 
-        np.save(os.path.join(directory, 'Losses.npy'), Losses)
-        np.save(os.path.join(directory, 'd1Val.npy'), d1Val)
-        np.save(os.path.join(directory, 'd2Val.npy'), d2Val)
-        np.save(os.path.join(directory, 'd3Val.npy'), d3Val)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
 
-        currentDice = (d1+d2+d3+d4)/4
+            np.save(os.path.join(directory, 'Losses.npy'), Losses)
+            np.save(os.path.join(directory, 'd1Val.npy'), d1Val)
+            np.save(os.path.join(directory, 'd2Val.npy'), d2Val)
+            np.save(os.path.join(directory, 'd3Val.npy'), d3Val)
 
-        print("[val] DSC: (1): {:.4f} (2): {:.4f}  (3): {:.4f} (4): {:.4f}".format(d1,d2,d3,d4)) # MRI
+            currentDice = (d1+d2+d3+d4)/4
 
-        currentDice = currentDice.data.numpy()
+            print("[val] DSC: (1): {:.4f} (2): {:.4f}  (3): {:.4f} (4): {:.4f}".format(d1,d2,d3,d4)) # MRI
+
+            currentDice = currentDice.data.numpy()
 
         # Evaluate on 3D
-        saveImages_for3D(net, val_loader_save_images, batch_size_val_save, 1000, modelName, False, False)
-        reconstruct3D(modelName, 1000, isBest=False)
-        DSC_3D = evaluate3D(modelName)
+#        saveImages_for3D(net, val_loader_save_images, batch_size_val_save, 1000, modelName, False, False)
+#        reconstruct3D(modelName, 1000, isBest=False)
+#        DSC_3D = evaluate3D(modelName)
 
-        mean_DSC3D = np.mean(DSC_3D, 0)
-        std_DSC3D = np.std(DSC_3D,0)
+#        mean_DSC3D = np.mean(DSC_3D, 0)
+#        std_DSC3D = np.std(DSC_3D,0)
+#
+#        d1Val_3D.append(mean_DSC3D[0])
+#        d2Val_3D.append(mean_DSC3D[1])
+#        d3Val_3D.append(mean_DSC3D[2])
+#        d4Val_3D.append(mean_DSC3D[3])
+#        d1Val_3D_std.append(std_DSC3D[0])
+#        d2Val_3D_std.append(std_DSC3D[1])
+#        d3Val_3D_std.append(std_DSC3D[2])
+#        d4Val_3D_std.append(std_DSC3D[3])
 
-        d1Val_3D.append(mean_DSC3D[0])
-        d2Val_3D.append(mean_DSC3D[1])
-        d3Val_3D.append(mean_DSC3D[2])
-        d4Val_3D.append(mean_DSC3D[3])
-        d1Val_3D_std.append(std_DSC3D[0])
-        d2Val_3D_std.append(std_DSC3D[1])
-        d3Val_3D_std.append(std_DSC3D[2])
-        d4Val_3D_std.append(std_DSC3D[3])
-
-        np.save(os.path.join(directory, 'd0Val_3D.npy'), d1Val_3D)
-        np.save(os.path.join(directory, 'd1Val_3D.npy'), d2Val_3D)
-        np.save(os.path.join(directory, 'd2Val_3D.npy'), d3Val_3D)
-        np.save(os.path.join(directory, 'd3Val_3D.npy'), d4Val_3D)
-        
-        np.save(os.path.join(directory, 'd0Val_3D_std.npy'), d1Val_3D_std)
-        np.save(os.path.join(directory, 'd1Val_3D_std.npy'), d2Val_3D_std)
-        np.save(os.path.join(directory, 'd2Val_3D_std.npy'), d3Val_3D_std)
-        np.save(os.path.join(directory, 'd3Val_3D_std.npy'), d4Val_3D_std)
+#        np.save(os.path.join(directory, 'd0Val_3D.npy'), d1Val_3D)
+#        np.save(os.path.join(directory, 'd1Val_3D.npy'), d2Val_3D)
+#        np.save(os.path.join(directory, 'd2Val_3D.npy'), d3Val_3D)
+#        np.save(os.path.join(directory, 'd3Val_3D.npy'), d4Val_3D)
+#        
+#        np.save(os.path.join(directory, 'd0Val_3D_std.npy'), d1Val_3D_std)
+#        np.save(os.path.join(directory, 'd1Val_3D_std.npy'), d2Val_3D_std)
+#        np.save(os.path.join(directory, 'd2Val_3D_std.npy'), d3Val_3D_std)
+#        np.save(os.path.join(directory, 'd3Val_3D_std.npy'), d4Val_3D_std)
 
 
         if currentDice > BestDice:
@@ -312,20 +312,20 @@ def runTraining(args):
             
             if currentDice > 0.40:
 
-                if np.mean(mean_DSC3D)>np.mean(BestDice3D):
-                    BestDice3D = mean_DSC3D
+ #               if np.mean(mean_DSC3D)>np.mean(BestDice3D):
+#                    BestDice3D = mean_DSC3D
 
-                print("###    In 3D -----> MEAN: {}, Dice(1): {:.4f} Dice(2): {:.4f} Dice(3): {:.4f} Dice(4): {:.4f}   ###".format(np.mean(mean_DSC3D),mean_DSC3D[0], mean_DSC3D[1], mean_DSC3D[2], mean_DSC3D[3]))
+#                print("###    In 3D -----> MEAN: {}, Dice(1): {:.4f} Dice(2): {:.4f} Dice(3): {:.4f} Dice(4): {:.4f}   ###".format(np.mean(mean_DSC3D),mean_DSC3D[0], mean_DSC3D[1], mean_DSC3D[2], mean_DSC3D[3]))
 
                 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Saving best model..... ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 if not os.path.exists(model_dir):
                     os.makedirs(model_dir)
                 torch.save(net.state_dict(), os.path.join(model_dir, "Best_" + modelName + ".pth"),pickle_module=dill)
-                reconstruct3D(modelName, 1000, isBest=True)
+ #               reconstruct3D(modelName, 1000, isBest=True)
 
         print("###                                                       ###")
         print("###    Best Dice: {:.4f} at epoch {} with Dice(1): {:.4f} Dice(2): {:.4f} Dice(3): {:.4f} Dice(4): {:.4f}   ###".format(BestDice, BestEpoch, d1,d2,d3,d4))
-        print("###    Best Dice in 3D: {:.4f} with Dice(1): {:.4f} Dice(2): {:.4f} Dice(3): {:.4f} Dice(4): {:.4f} ###".format(np.mean(BestDice3D),BestDice3D[0], BestDice3D[1], BestDice3D[2], BestDice3D[3] ))
+#        print("###    Best Dice in 3D: {:.4f} with Dice(1): {:.4f} Dice(2): {:.4f} Dice(3): {:.4f} Dice(4): {:.4f} ###".format(np.mean(BestDice3D),BestDice3D[0], BestDice3D[1], BestDice3D[2], BestDice3D[3] ))
         print("###                                                       ###")
 
         if i % (BestEpoch + 50) == 0:
