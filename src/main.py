@@ -338,7 +338,7 @@ def runTraining(args):
 if __name__ == '__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('--modelName',default = 'MS-Dual-Guided',type=str)
-    parser.add_argument('--root', default = '../DataSet/', type = str)
+    parser.add_argument('--root', default = './CHAOS_MR/', type = str)
     parser.add_argument('--num_workers', default = 4, type = int)
     parser.add_argument('--save_dir', default = 'Results/Statistics/', type =str)
     parser.add_argument('--batch_size',default = 8,type = int)
