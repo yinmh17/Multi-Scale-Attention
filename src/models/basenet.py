@@ -16,7 +16,7 @@ from .nonlocal import NonLocal2d
 class GCBModule(nn.Module):
     def __init__(self, in_channels, out_channels, num_classes):
         super(GCBModule, self).__init__()
-        type = 'nl'
+        type = 'nl_bn'
         inter_channels = in_channels // 4
         self.conva = nn.Sequential(nn.Conv2d(in_channels, inter_channels, 3, padding=1, bias=False),
                                    nn.BatchNorm2d(inter_channels), nn.PReLU())
@@ -65,10 +65,10 @@ class ResNet(nn.Module):
         self.conv3 = conv3x3(64, 128)
         self.bn3 = BatchNorm2d(128)
         self.relu3 = nn.ReLU(inplace=False)
-        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        #self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         self.relu = nn.ReLU(inplace=False)
-        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1, ceil_mode=True) # change
+        #self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1, ceil_mode=True) # change
         self.layer1 = self._make_layer(block, 64, layers[0])
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
         self.layer3 = self._make_layer(block, 256, layers[2], stride=1, dilation=2)
@@ -82,26 +82,6 @@ class ResNet(nn.Module):
             nn.Dropout2d(0.1),
             nn.Conv2d(512, num_classes, kernel_size=1, stride=1, padding=0, bias=True)
             )
-
-    def get_learnable_parameters(self, freeze_layers=[True,True,True,True,False,False,False]):
-        lr_parameters = []
-
-        if not freeze_layers[0]:
-            for i in [self.conv1, self.bn1, self.conv2, self.bn2, self.conv3, self.bn3]:
-                params = i.named_parameters()
-                for name, p in params:
-                    print(name)
-                    lr_parameters.append(p)
-
-        layers = [self.layer1, self.layer2, self.layer3, self.layer4, self.layer5, self.layer6]
-        for freeze, layer in zip(freeze_layers[1:], layers):
-            if not freeze:
-                params = layer.named_parameters()
-                for name, p in params:
-                    print(name)
-                    lr_parameters.append(p)
-
-        return lr_parameters
 
     def _make_layer(self, block, planes, blocks, stride=1, dilation=1, multi_grid=1):
         downsample = None
@@ -121,17 +101,19 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x, recurrence=1):
-        x = self.relu1(self.bn1(self.conv1(x)))
-        x = self.relu2(self.bn2(self.conv2(x)))
-        x = self.relu3(self.bn3(self.conv3(x)))
-        x = self.maxpool(x)
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x_dsn = self.dsn(x)
-        x = self.layer4(x)
-        x = self.head(x, recurrence)
-        return [x, x_dsn]
+        y = self.relu1(self.bn1(self.conv1(x)))
+        y = self.relu2(self.bn2(self.conv2(y)))
+        y = self.relu3(self.bn3(self.conv3(y)))
+        y = self.maxpool(y)
+        y = self.layer1(y)
+        y = self.layer2(y)
+        y = self.layer3(y)
+        y_dsn = self.dsn(y)
+        y = self.layer4(y)
+        y = self.head(y, recurrence)
+        y = F.upsample(y, size=x.size()[2:], mode='bilinear')
+        y_dsn = F.upsample(y_dsn, size=x.size()[2:], mode='bilinear')
+        return [y, y_dsn]
 
 
 def Res_Deeplab(num_classes=5):
