@@ -7,8 +7,6 @@ import torch.nn.functional as F
 import torch.nn as nn
 from torch.autograd import Variable
 from .attention import (
-    PAM_Module,
-    CAM_Module,
     semanticModule,
     PAM_CAM_Layer,
     MultiConv
