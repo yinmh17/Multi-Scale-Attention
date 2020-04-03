@@ -100,6 +100,7 @@ def runTraining(args):
 
     if torch.cuda.is_available():
         net.cuda()
+        net = DataParallel(net, device_ids=[0,1,2,3])
         softMax.cuda()
         CE_loss.cuda()
         Dice_loss.cuda()
