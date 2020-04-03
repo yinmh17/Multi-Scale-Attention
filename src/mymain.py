@@ -222,6 +222,8 @@ def runTraining(args):
             print("[val] DSC: (1): {:.4f} (2): {:.4f}  (3): {:.4f} (4): {:.4f}".format(d1,d2,d3,d4)) # MRI
 
             currentDice = currentDice.data.numpy()
+            if not os.path.exists(model_dir):
+                os.makedirs(model_dir)
             torch.save(net.state_dict(), os.path.join(model_dir, "Latest_" + modelName + ".pth"),pickle_module=dill)
 
         # Evaluate on 3D
