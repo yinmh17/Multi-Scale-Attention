@@ -162,8 +162,8 @@ def runTraining(args):
             Segmentation_class = getTargetSegmentation(Segmentation)
 
             # Cross-entropy loss
-            loss0 = CE_loss(outputs0, Segmentation_class)
-            loss1 = CE_loss(outputs1, Segmentation_class)
+            loss0 = CE_loss(output0, Segmentation_class)
+            loss1 = CE_loss(output1, Segmentation_class)
 
             lossG = loss0+0.4*loss1
 
