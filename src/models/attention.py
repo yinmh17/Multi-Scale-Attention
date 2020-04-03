@@ -79,11 +79,11 @@ class semanticModule(nn.Module):
 
         return enc2.view(-1), dec1
 
-class PAM_Module(nn.Module):
+class _PAM_Module(nn.Module):
     """ Position attention module"""
     #Ref from SAGAN
     def __init__(self, in_dim):
-        super(PAM_Module, self).__init__()
+        super(_PAM_Module, self).__init__()
         self.chanel_in = in_dim
 
         self.query_conv = nn.Conv2d(in_channels=in_dim, out_channels=in_dim//8, kernel_size=1)
@@ -117,10 +117,10 @@ class PAM_Module(nn.Module):
         return out
 
 
-class CAM_Module(nn.Module):
+class _CAM_Module(nn.Module):
     """ Channel attention module"""
     def __init__(self, in_dim):
-        super(CAM_Module, self).__init__()
+        super(_CAM_Module, self).__init__()
         self.chanel_in = in_dim
         
         self.gamma = nn.Parameter(torch.zeros(1))
@@ -169,8 +169,8 @@ class PAM_CAM_Layer(nn.Module):
             nn.Conv2d(in_ch * 2, in_ch, kernel_size=3, padding=1),
             nn.BatchNorm2d(in_ch),
             nn.PReLU(),
-            PAM_Module(in_ch) if use_pam else CAM_Module(in_ch),
-			nn.Conv2d(in_ch, in_ch, kernel_size=3, padding=1),
+            _PAM_Module(in_ch) if use_pam else _CAM_Module(in_ch),
+            nn.Conv2d(in_ch, in_ch, kernel_size=3, padding=1),
             nn.BatchNorm2d(in_ch),
             nn.PReLU()
         )
