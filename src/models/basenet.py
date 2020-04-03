@@ -127,7 +127,7 @@ class ResNet(nn.Module):
         self.dsn = nn.Sequential(
             nn.Conv2d(1024, 512, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(512),
-            nn.PReLu(),
+            nn.PReLU(),
             nn.Dropout2d(0.1),
             nn.Conv2d(512, num_classes, kernel_size=1, stride=1, padding=0, bias=True)
             )
