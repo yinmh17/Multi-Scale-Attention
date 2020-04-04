@@ -101,7 +101,7 @@ class MedicalImageDataset(Dataset):
         # print("{} and {}".format(img_path,mask_path))
         #img = Image.open(img_path)  # .convert('RGB')
         #mask = Image.open(mask_path)  # .convert('RGB')
-        img = Image.open(img_path).convert('L')
+        img = Image.open(img_path).convert('RGB')
         mask = Image.open(mask_path).convert('L')
         
         #print('{} and {}'.format(img_path,mask_path))
