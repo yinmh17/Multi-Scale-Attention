@@ -104,7 +104,7 @@ class ResNet(nn.Module):
     def __init__(self, block, layers, num_classes):
         self.inplanes = 128
         super(ResNet, self).__init__()
-        self.conv1 = conv3x3(1, 64, stride=2)
+        self.conv1 = conv3x3(3, 64, stride=2)
         self.bn1 = nn.BatchNorm2d(64)
         self.relu1 = nn.ReLU(inplace=False)
         self.conv2 = conv3x3(64, 64)
