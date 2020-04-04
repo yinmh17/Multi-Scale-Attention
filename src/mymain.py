@@ -262,7 +262,7 @@ def runTraining(args):
  #               reconstruct3D(modelName, 1000, isBest=True)
 
         print("###                                                       ###")
-        print("###    Best Dice: {:.4f} at epoch {} with Dice(1): {:.4f} Dice(2): {:.4f} Dice(3): {:.4f} Dice(4): {:.4f}   ###".format(BestDice, BestEpoch, d1,d2,d3,d4))
+        print("###    Best Dice: {:.4f} at epoch {} with Dice(1): {:.4f}    ###".format(BestDice, BestEpoch, d1))
 #        print("###    Best Dice in 3D: {:.4f} with Dice(1): {:.4f} Dice(2): {:.4f} Dice(3): {:.4f} Dice(4): {:.4f} ###".format(np.mean(BestDice3D),BestDice3D[0], BestDice3D[1], BestDice3D[2], BestDice3D[3] ))
         print("###                                                       ###")
 
