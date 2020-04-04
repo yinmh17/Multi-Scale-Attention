@@ -41,7 +41,7 @@ def runTraining(args):
     batch_size_val = 1
     batch_size_val_save = 1
     lr = args.lr
-
+    base_lr=lr
     epoch = args.epochs
     root_dir = args.root
     model_dir = 'model'
@@ -277,11 +277,10 @@ def runTraining(args):
 #        print("###    Best Dice in 3D: {:.4f} with Dice(1): {:.4f} Dice(2): {:.4f} Dice(3): {:.4f} Dice(4): {:.4f} ###".format(np.mean(BestDice3D),BestDice3D[0], BestDice3D[1], BestDice3D[2], BestDice3D[3] ))
         print("###                                                       ###")
 
-        if i % (BestEpoch + 50) == 0:
-            for param_group in optimizer.param_groups:
-                lr = lr*0.5
-                param_group['lr'] = lr
-                print(' ----------  New learning Rate: {}'.format(lr))
+        for param_group in optimizer.param_groups:
+            lr = base_lr*((1-float(i)/epoch)**0.9)
+            param_group['lr'] = lr
+            print(' ----------  New learning Rate: {}'.format(lr))
 
 
 if __name__ == '__main__':
