@@ -168,14 +168,11 @@ def runTraining(args):
             lossG = loss0+0.4*loss1
 
             # Compute the DSC
-            DicesN, DicesB, DicesW, DicesT, DicesZ = Dice_loss(segmentation_prediction_ones, Segmentation_planes)
+            DicesN, DicesB= Dice_loss(segmentation_prediction_ones, Segmentation_planes)
 
             DiceB = DicesToDice(DicesB)
-            DiceW = DicesToDice(DicesW)
-            DiceT = DicesToDice(DicesT)
-            DiceZ = DicesToDice(DicesZ)
 
-            Dice_score = (DiceB + DiceW + DiceT+ DiceZ) / 4
+            Dice_score = DiceB 
 
             lossG.backward()
             optimizer.step()
@@ -185,12 +182,9 @@ def runTraining(args):
             printProgressBar(j + 1, totalImages,
                              prefix="[Training] Epoch: {} ".format(i),
                              length=15,
-                             suffix=" Mean Dice: {:.4f}, Dice1: {:.4f} , Dice2: {:.4f}, , Dice3: {:.4f}, Dice4: {:.4f} ".format(
+                             suffix=" Mean Dice: {:.4f}, Dice1: {:.4f} , ".format(
                                  Dice_score.cpu().data.numpy(),
-                                 DiceB.data.cpu().data.numpy(),
-                                 DiceW.data.cpu().data.numpy(),
-                                 DiceT.data.cpu().data.numpy(),
-                                 DiceZ.data.cpu().data.numpy(),))
+                                 DiceB.data.cpu().data.numpy(),))
 
       
         printProgressBar(totalImages, totalImages,
@@ -202,24 +196,19 @@ def runTraining(args):
         
         Losses.append(np.mean(lossVal))
         if i%5==0:
-            d1,d2,d3,d4 = inference(net, val_loader)
+            d1 = inference(net, val_loader)
 
             d1Val.append(d1)
-            d2Val.append(d2)
-            d3Val.append(d3)
-            d4Val.append(d4)
 
             if not os.path.exists(directory):
                 os.makedirs(directory)
 
             np.save(os.path.join(directory, 'Losses.npy'), Losses)
             np.save(os.path.join(directory, 'd1Val.npy'), d1Val)
-            np.save(os.path.join(directory, 'd2Val.npy'), d2Val)
-            np.save(os.path.join(directory, 'd3Val.npy'), d3Val)
 
-            currentDice = (d1+d2+d3+d4)/4
+            currentDice = d1
 
-            print("[val] DSC: (1): {:.4f} (2): {:.4f}  (3): {:.4f} (4): {:.4f}".format(d1,d2,d3,d4)) # MRI
+            print("[val] DSC: (1): {:.4f} ".format(d1)) # MRI
 
             currentDice = currentDice.data.numpy()
             if not os.path.exists(model_dir):
