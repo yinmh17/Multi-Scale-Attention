@@ -206,7 +206,7 @@ def getTargetSegmentation(batch):
     # values are as follows : 0, 0.3137255, 0.627451 and 0.94117647
     # output is 1 channel of discrete values : 0, 1, 2 and 3
     
-    denom = 0.24705882 # for Chaos MRI  Dataset this value
+    denom = 1.0 # for Chaos MRI  Dataset this value
 
     return (batch / denom).round().long().squeeze()
 
