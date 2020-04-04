@@ -169,18 +169,16 @@ def DicesToDice(Dices):
 def getSingleImage(pred):
     # input is a 4-channels image corresponding to the predictions of the net
     # output is a gray level image (1 channel) of the segmentation with "discrete" values
-    num_classes = 5
+    num_classes = 2
     Val = to_var(torch.zeros(num_classes))
 
     # Chaos MRI
-    Val[1] = 0.24705882
-    Val[2] = 0.49411765
-    Val[3] = 0.7411765
-    Val[4] = 0.9882353
+    Val[1] = 1.0
+
     
     x = predToSegmentation(pred)
    
-    out = x * Val.view(1, 5, 1, 1)
+    out = x * Val.view(1, 2, 1, 1)
 
     return out.sum(dim=1, keepdim=True)
 
@@ -195,7 +193,7 @@ def getOneHotSegmentation(batch):
     backgroundVal = 0
 
     # Chaos MRI (These values are to set label values as 0,1,2,3 and 4)
-    label1 = 1
+    label1 = 1.0
     
     oneHotLabels = torch.cat((batch == backgroundVal, batch == label1),
                              dim=1)
