@@ -283,7 +283,7 @@ def inference(net, img_batch):
 
     ValDice1 = DicesToDice(Dice1)
    
-    return [ValDice1]
+    return ValDice1
 
 
 
