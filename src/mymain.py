@@ -49,10 +49,13 @@ def runTraining(args):
     print(' Dataset: {} '.format(root_dir))
 
     transform = transforms.Compose([
-        transforms.ToTensor()
+        transforms.Resize([512,512]),
+        transforms.ToTensor(),
+        transforms.Normalize(mean = (0.5, 0.5, 0.5), std = (0.5, 0.5, 0.5))
     ])
 
     mask_transform = transforms.Compose([
+        transforms.Resize([512,512]),
         transforms.ToTensor()
     ])
 
