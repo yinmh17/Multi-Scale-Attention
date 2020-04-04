@@ -141,24 +141,24 @@ class computeDiceOneHot(nn.Module):
         batchsize = GT.size(0)
         DiceN = to_var(torch.zeros(batchsize, 2))
         DiceB = to_var(torch.zeros(batchsize, 2))
-        DiceW = to_var(torch.zeros(batchsize, 2))
-        DiceT = to_var(torch.zeros(batchsize, 2))
-        DiceZ = to_var(torch.zeros(batchsize, 2))
+#        DiceW = to_var(torch.zeros(batchsize, 2))
+#        DiceT = to_var(torch.zeros(batchsize, 2))
+#        DiceZ = to_var(torch.zeros(batchsize, 2))
 
         for i in range(batchsize):
             DiceN[i, 0] = self.inter(pred[i, 0], GT[i, 0])
             DiceB[i, 0] = self.inter(pred[i, 1], GT[i, 1])
-            DiceW[i, 0] = self.inter(pred[i, 2], GT[i, 2])
-            DiceT[i, 0] = self.inter(pred[i, 3], GT[i, 3])
-            DiceZ[i, 0] = self.inter(pred[i, 4], GT[i, 4])
+#            DiceW[i, 0] = self.inter(pred[i, 2], GT[i, 2])
+#            DiceT[i, 0] = self.inter(pred[i, 3], GT[i, 3])
+#            DiceZ[i, 0] = self.inter(pred[i, 4], GT[i, 4])
 
             DiceN[i, 1] = self.sum(pred[i, 0], GT[i, 0])
             DiceB[i, 1] = self.sum(pred[i, 1], GT[i, 1])
-            DiceW[i, 1] = self.sum(pred[i, 2], GT[i, 2])
-            DiceT[i, 1] = self.sum(pred[i, 3], GT[i, 3])
-            DiceZ[i, 1] = self.sum(pred[i, 4], GT[i, 4])
+#            DiceW[i, 1] = self.sum(pred[i, 2], GT[i, 2])
+#            DiceT[i, 1] = self.sum(pred[i, 3], GT[i, 3])
+#            DiceZ[i, 1] = self.sum(pred[i, 4], GT[i, 4])
 
-        return DiceN, DiceB , DiceW, DiceT, DiceZ
+        return DiceN, DiceB 
 
 
 def DicesToDice(Dices):
@@ -195,12 +195,9 @@ def getOneHotSegmentation(batch):
     backgroundVal = 0
 
     # Chaos MRI (These values are to set label values as 0,1,2,3 and 4)
-    label1 = 0.24705882
-    label2 = 0.49411765
-    label3 = 0.7411765
-    label4 = 0.9882353
+    label1 = 1
     
-    oneHotLabels = torch.cat((batch == backgroundVal, batch == label1, batch == label2, batch == label3, batch == label4),
+    oneHotLabels = torch.cat((batch == backgroundVal, batch == label1),
                              dim=1)
     
     return oneHotLabels.float()
@@ -280,21 +277,15 @@ def inference(net, img_batch):
         Segmentation_planes = getOneHotSegmentation(Segmentation)
 
         segmentation_prediction_ones = predToSegmentation(pred_y)
-        DicesN, Dices1, Dices2, Dices3, Dices4 = dice(segmentation_prediction_ones, Segmentation_planes)
+        DicesN, Dices1 = dice(segmentation_prediction_ones, Segmentation_planes)
 
         Dice1[i] = Dices1.data
-        Dice2[i] = Dices2.data
-        Dice3[i] = Dices3.data
-        Dice4[i] = Dices4.data
 
     printProgressBar(total, total, done="[Inference] Segmentation Done !")
 
     ValDice1 = DicesToDice(Dice1)
-    ValDice2 = DicesToDice(Dice2)
-    ValDice3 = DicesToDice(Dice3)
-    ValDice4 = DicesToDice(Dice4)
    
-    return [ValDice1,ValDice2,ValDice3,ValDice4]
+    return [ValDice1]
 
 
 
