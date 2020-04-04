@@ -1,1 +1,1 @@
-CUDA_VISIBLE_DEVICES=0 python src/main.py --modelName "MS-Dual-Guided" --batch_size 8 --epochs 300 --lr 1e-3            
+python src/main.py --root '../CVC_BIG/' --modelName "colo_nl" --batch_size 8 --epochs 300 --lr 1e-3            
